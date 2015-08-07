@@ -5,10 +5,10 @@ import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test
 
-class FailingTest : AndroidTest() {
-  @Rule val rule = ActivityTestRule(javaClass<MainActivity>())
+public class FailingTest : AndroidTest() {
+  public @Rule val rule: ActivityTestRule<MainActivity> = ActivityTestRule(javaClass<MainActivity>())
 
-  @Test fun testFail() {
+  public @Test fun testFail() {
     Assert.fail()
   }
 }
