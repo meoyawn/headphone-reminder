@@ -1,14 +1,17 @@
 package adeln.boilerplate
 
+import android.support.test.espresso.Espresso.onView
+import android.support.test.espresso.assertion.ViewAssertions.matches
+import android.support.test.espresso.matcher.ViewMatchers.isDisplayed
+import android.support.test.espresso.matcher.ViewMatchers.withText
 import android.support.test.rule.ActivityTestRule
-import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test
 
-public class FailingTest : AndroidTest() {
-  public @Rule val rule: ActivityTestRule<MainActivity> = ActivityTestRule(javaClass<MainActivity>())
+class FailingTest : AndroidTest() {
+  @Rule fun rule() = ActivityTestRule(javaClass<MainActivity>())
 
-  public @Test fun testFail() {
-    Assert.fail()
+  @Test fun testFail() {
+    onView(withText("Fuck")).check(matches(isDisplayed()))
   }
 }
