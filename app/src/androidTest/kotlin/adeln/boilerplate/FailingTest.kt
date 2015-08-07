@@ -6,9 +6,9 @@ import org.junit.Rule
 import org.junit.Test
 
 class FailingTest : AndroidTest() {
-    @Rule public val rule: ActivityTestRule<MainActivity> = ActivityTestRule(javaClass<MainActivity>())
+  @Rule val rule = ActivityTestRule(javaClass<MainActivity>())
 
-    @Test fun testFail() {
-        Assert.fail()
-    }
+  @Test fun testFail() {
+    Assert.fail()
+  }
 }
