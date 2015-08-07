@@ -1,18 +1,36 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
 
     defaultConfig {
-        applicationId "com.example.adelniz.expreriments"
         minSdkVersion 14
         targetSdkVersion 22
+
         versionCode 1
         versionName "1.0"
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
+        androidTest.java.srcDirs += 'src/androidTest/kotlin'
+    }
+
+    kapt {
+        generateStubs = true
     }
 }
 
 dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    compile supportDependencies.appCompat
 
+    testCompile "junit:junit:4.12"
+    testCompile "org.robolectric:robolectric:3.0"
+
+    androidTestCompile(supportTestDependencies.rules) { exclude module: "support-annotations" }
+    androidTestCompile(supportTestDependencies.espresso) { exclude module: "support-annotations" }
 }
