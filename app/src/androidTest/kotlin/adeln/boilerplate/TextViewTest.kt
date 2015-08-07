@@ -8,7 +8,7 @@ import android.support.test.rule.ActivityTestRule
 import org.junit.Rule
 import org.junit.Test
 
-class FailingTest : AndroidTest() {
+class TextViewTest : AndroidTest() {
   @Rule fun rule() = ActivityTestRule(javaClass<MainActivity>())
 
   @Test fun testFail() {
