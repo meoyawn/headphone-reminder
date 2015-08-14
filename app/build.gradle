@@ -6,6 +6,8 @@ android {
   buildToolsVersion "22.0.1"
 
   defaultConfig {
+    applicationId "adeln.boilerplate"
+
     minSdkVersion 14
     targetSdkVersion 22
 
@@ -36,3 +38,19 @@ dependencies {
   androidTestCompile(supportTestDependencies.rules) { exclude module: "support-annotations" }
   androidTestCompile(supportTestDependencies.espresso) { exclude module: "support-annotations" }
 }
+
+final adb = android.getAdbExe()
+final installTask = "installDebug"
+final testTask = "connectedDebugAndroidTest"
+
+task grantAnimationPermission(type: Exec, dependsOn: installTask) {
+  commandLine "$adb shell pm grant $android.defaultConfig.applicationId android.permission.SET_ANIMATION_SCALE".split(' ')
+}
+
+tasks.whenTaskAdded { task ->
+  if (task.name.equals(testTask)) {
+    task.dependsOn grantAnimationPermission
+  }
+}
+
+task testUi(dependsOn: testTask)
