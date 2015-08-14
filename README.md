@@ -1,2 +1,3 @@
 # android-boilerplate
-kick-start your next app
+
+because writing android apps in Java is so 2015
