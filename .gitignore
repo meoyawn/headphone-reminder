@@ -28,3 +28,5 @@ proguard/
 
 .idea/
 *.iml
+
+!.idea/codeStyleSettings.xml
