@@ -4,7 +4,11 @@ buildscript {
     targetSdk = 23
     buildTools = "23.0.0"
     kotlinVersion = "0.12.1230"
+
     supportLibrary = "23.0.0"
+
+    supportTest = "0.3"
+    espressoVersion = "2.2"
 
     supportDependencies = [
         v4               : "com.android.support:support-v4:$supportLibrary",
@@ -15,11 +19,10 @@ buildscript {
         supportAnnotation: "com.android.support:support-annotations:$supportLibrary"
     ]
 
-    final supportTest = "0.3"
     supportTestDependencies = [
         runner  : "com.android.support.test:runner:$supportTest",
         rules   : "com.android.support.test:rules:$supportTest",
-        espresso: 'com.android.support.test.espresso:espresso-core:2.2'
+        espresso: "com.android.support.test.espresso:espresso-core:$espressoVersion"
     ]
   }
 
