@@ -1,7 +1,7 @@
 buildscript {
   ext {
     minSdk = 14
-    compileSdk = 23
+    targetSdk = 23
     buildTools = "23.0.0"
     kotlinVersion = "0.12.1230"
     supportLibrary = "23.0.0"

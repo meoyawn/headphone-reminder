@@ -2,14 +2,14 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-  compileSdkVersion compileSdk
+  compileSdkVersion targetSdk
   buildToolsVersion buildTools
 
   defaultConfig {
     applicationId "adeln.boilerplate"
 
     minSdkVersion minSdk
-    targetSdkVersion compileSdk
+    targetSdkVersion targetSdk
 
     versionCode 1
     versionName "1.0"
