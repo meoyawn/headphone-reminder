@@ -1,8 +1,15 @@
 buildscript {
   ext {
+    minSdk = 14
+    targetSdk = 23
+    buildTools = "23.0.0"
     kotlinVersion = "0.12.1230"
 
-    final supportLibrary = "22.2.1"
+    supportLibrary = "23.0.0"
+
+    supportTest = "0.3"
+    espressoVersion = "2.2"
+
     supportDependencies = [
         v4               : "com.android.support:support-v4:$supportLibrary",
         design           : "com.android.support:design:$supportLibrary",
@@ -12,20 +19,22 @@ buildscript {
         supportAnnotation: "com.android.support:support-annotations:$supportLibrary"
     ]
 
-    final supportTest = "0.3"
     supportTestDependencies = [
         runner  : "com.android.support.test:runner:$supportTest",
         rules   : "com.android.support.test:rules:$supportTest",
-        espresso: 'com.android.support.test.espresso:espresso-core:2.2'
+        espresso: "com.android.support.test.espresso:espresso-core:$espressoVersion"
     ]
   }
 
   repositories {
     jcenter()
+    // jRebel
+    maven { url 'https://repos.zeroturnaround.com/nexus/content/repositories/zt-public-releases' }
   }
 
   dependencies {
     classpath "com.android.tools.build:gradle:1.3.1"
+    classpath 'com.zeroturnaround.jrebel.android:jr-android-gradle:0.8.0.68'
     classpath 'com.github.ben-manes:gradle-versions-plugin:0.11.3'
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
   }
