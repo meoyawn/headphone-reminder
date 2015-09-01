@@ -33,6 +33,10 @@ dependencies {
   compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
   compile supportDependencies.appCompat
 
+  // okio stack
+  compile "com.squareup.retrofit:retrofit:2.0.0-beta1"
+  compile 'com.squareup.moshi:moshi:0.9.0'
+
   testCompile "junit:junit:4.12"
   testCompile "org.robolectric:robolectric:3.0"
 
