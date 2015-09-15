@@ -51,18 +51,5 @@ dependencies {
   }
 }
 
-final adb = android.getAdbExe()
-final installTask = "installDebug"
 final testTask = "connectedDebugAndroidTest"
-
-task grantAnimationPermission(type: Exec, dependsOn: installTask) {
-  commandLine "$adb shell pm grant $android.defaultConfig.applicationId android.permission.SET_ANIMATION_SCALE".split(' ')
-}
-
-tasks.whenTaskAdded { task ->
-  if (task.name.equals(testTask)) {
-    task.dependsOn grantAnimationPermission
-  }
-}
-
 task testUi(dependsOn: testTask)
