@@ -65,3 +65,9 @@ configurations {
 
 final testTask = "connectedDebugAndroidTest"
 task testUi(dependsOn: testTask)
+
+// The default 'assemble' task only applies to normal variants. Add test variants as well.
+final assembleTask = tasks.getByName('assemble')
+android.testVariants.all { variant ->
+  assembleTask.dependsOn variant.assemble
+}
