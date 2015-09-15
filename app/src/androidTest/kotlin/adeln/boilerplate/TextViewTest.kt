@@ -20,8 +20,4 @@ class TextViewTest {
   @Test fun testPass() {
     onView(withId(R.id.text)).check(matches(isDisplayed()))
   }
-
-  @Test fun testFail() {
-    onView(withId(R.id.text)).check(matches(not(isDisplayed())))
-  }
 }

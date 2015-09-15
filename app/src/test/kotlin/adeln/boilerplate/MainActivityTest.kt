@@ -10,8 +10,4 @@ class MainActivityTest {
   @Test fun testPass() {
     assertThat(2).isEqualTo(1 + 1)
   }
-
-  @Test fun testFail() {
-    assertThat(false).isTrue()
-  }
 }
