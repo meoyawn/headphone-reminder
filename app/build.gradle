@@ -39,9 +39,16 @@ dependencies {
 
   testCompile "junit:junit:4.12"
   testCompile "org.robolectric:robolectric:3.0"
+  testCompile("com.squareup.assertj:assertj-android:1.1.0") {
+    exclude module: "support-annotations"
+  }
 
-  androidTestCompile(supportTestDependencies.rules) { exclude module: "support-annotations" }
-  androidTestCompile(supportTestDependencies.espresso) { exclude module: "support-annotations" }
+  androidTestCompile(supportTestDependencies.rules) {
+    exclude module: "support-annotations"
+  }
+  androidTestCompile(supportTestDependencies.espresso) {
+    exclude module: "support-annotations"
+  }
 }
 
 final adb = android.getAdbExe()
