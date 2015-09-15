@@ -1,6 +1,4 @@
 language: android
-sudo: false
-jdk: oraclejdk8
 
 branches:
   only:
@@ -18,6 +16,6 @@ android:
 before_install:
   - 'export TERM=dumb'
   - 'echo $JAVA_OPTS'
-  - 'export JAVA_OPTS="-XX:MaxPermSize=512m -XX:+CMSClassUnloadingEnabled -XX:+CMSPermGenSweepingEnabled -Xmx1024m"'
+  - 'export JAVA_OPTS="-XX:+CMSClassUnloadingEnabled -Xmx1024m"'
 
 script: "./gradlew build"
