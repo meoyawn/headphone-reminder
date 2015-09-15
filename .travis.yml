@@ -14,5 +14,9 @@ android:
   licenses:
   - android-sdk-license-.+
 
+before_script:
+  - 'echo $JAVA_OPTS'
+  - 'export JAVA_OPTS="-XX:MaxPermSize=512m -XX:+CMSClassUnloadingEnabled -XX:+CMSPermGenSweepingEnabled -XX:+HeapDumpOnOutOfMemoryError -Xmx1024m"'
+
 before_install: export TERM=dumb
 script: "./gradlew build"
