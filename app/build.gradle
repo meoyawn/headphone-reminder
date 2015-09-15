@@ -39,16 +39,16 @@ dependencies {
 
   testCompile "junit:junit:4.12"
   testCompile "org.robolectric:robolectric:3.0"
-  testCompile("com.squareup.assertj:assertj-android:1.1.0") {
-    exclude module: "support-annotations"
-  }
+  testCompile "com.squareup.assertj:assertj-android:1.1.0"
 
-  androidTestCompile(supportTestDependencies.rules) {
-    exclude module: "support-annotations"
-  }
-  androidTestCompile(supportTestDependencies.espresso) {
-    exclude module: "support-annotations"
-  }
+  androidTestCompile supportTestDependencies.rules
+  androidTestCompile supportTestDependencies.espresso
+}
+
+// these are for suppressing gradle warnings
+configurations {
+  testCompile.exclude module: "support-annotations"
+  androidTestCompile.exclude module: "support-annotations"
 }
 
 final testTask = "connectedDebugAndroidTest"
