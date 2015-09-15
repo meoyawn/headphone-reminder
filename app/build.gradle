@@ -2,6 +2,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.zeroturnaround.jrebel.android'
 
+final isTravis = "true".equals(System.getenv("TRAVIS"))
+
 android {
   compileSdkVersion targetSdk
   buildToolsVersion buildTools
@@ -28,7 +30,13 @@ android {
     generateStubs = true
   }
 
+  dexOptions {
+    preDexLibraries = !isTravis
+  }
+
   lintOptions {
+    textReport true
+    textOutput "stdout"
     disable "InvalidPackage"
   }
 }
