@@ -1,14 +1,33 @@
 package adeln.boilerplate
 
-import android.app.AlarmManager
 import android.app.Application
-import android.content.Context
-import android.media.AudioManager
+import android.os.StrictMode
+import com.squareup.leakcanary.LeakCanary
+import com.squareup.leakcanary.RefWatcher
+import common.thread.threadPolicy
+import common.thread.vmPolicy
+import timber.log.Timber
+import kotlin.properties.Delegates
 
-class App : Application() {
-  override fun onCreate() {
-    super.onCreate()
-    val audio = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-    val alarm = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+// open for subclassing the test application
+open class App : Application() {
+  companion object {
+    var app: Application by Delegates.notNull()
   }
+
+  override fun onCreate(): Unit {
+    app = this
+    super.onCreate()
+
+    if (BuildConfig.DEBUG) {
+      StrictMode.setVmPolicy(vmPolicy())
+      StrictMode.setThreadPolicy(threadPolicy())
+    }
+
+    installLeakCanary()
+    Timber.plant(Timber.DebugTree())
+  }
+
+  // open for not invoking in tests
+  open fun installLeakCanary(): RefWatcher? = LeakCanary.install(this)
 }
