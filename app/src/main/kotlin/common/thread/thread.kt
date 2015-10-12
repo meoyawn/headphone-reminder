@@ -14,13 +14,3 @@ fun threadPolicy(): StrictMode.ThreadPolicy =
         .penaltyLog()
         .penaltyDeath()
         .build()
-
-fun vmPolicy(): StrictMode.VmPolicy =
-    StrictMode.VmPolicy.Builder()
-        .detectLeakedClosableObjects()
-        .detectFileUriExposure()
-        .detectLeakedRegistrationObjects()
-        .detectLeakedSqlLiteObjects()
-        .penaltyLog()
-        .penaltyDeath()
-        .build()

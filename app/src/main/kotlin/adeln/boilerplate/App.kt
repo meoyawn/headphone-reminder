@@ -4,8 +4,8 @@ import android.app.Application
 import android.os.StrictMode
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
+import common.android.vmPolicy
 import common.thread.threadPolicy
-import common.thread.vmPolicy
 import timber.log.Timber
 import kotlin.properties.Delegates
 
@@ -29,5 +29,6 @@ open class App : Application() {
   }
 
   // open for not invoking in tests
-  open fun installLeakCanary(): RefWatcher? = LeakCanary.install(this)
+  open fun installLeakCanary(): RefWatcher? =
+      LeakCanary.install(this)
 }
