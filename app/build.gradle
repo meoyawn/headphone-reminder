@@ -80,11 +80,37 @@ configurations {
   androidTestCompile.exclude module: "support-annotations"
 }
 
-final testTask = "connectedDebugAndroidTest"
-task testUi(dependsOn: testTask)
+apply plugin: 'jacoco'
 
-// The default 'assemble' task only applies to normal variants. Add test variants as well.
-final assembleTask = tasks.getByName('assemble')
-android.testVariants.all { variant ->
-  assembleTask.dependsOn variant.assemble
+jacoco {
+  version jacocoVersion
+}
+
+final jacocoExcludes = [
+    '**/R*.class',
+    '**/BuildConfig*',
+    "**/*Package.class"
+]
+
+final unitTestTask = "testDebugUnitTest"
+task jacocoReport(type: JacocoReport, dependsOn: unitTestTask) {
+  group = 'Reporting'
+  description = 'Generate Jacoco coverage reports after running tests.'
+
+  reports {
+    xml.enabled = true
+    html.enabled = true
+  }
+
+  classDirectories = fileTree(dir: 'build/intermediates/classes/debug', excludes: jacocoExcludes)
+  sourceDirectories = files("src/main/kotlin")
+  executionData = files("build/jacoco/${unitTestTask}.exec")
+
+  doFirst {
+    file('build/intermediates/classes/debug').eachFileRecurse { file ->
+      if (file.name.contains('$$')) {
+        file.renameTo(file.path.replace('$$', '$'))
+      }
+    }
+  }
 }

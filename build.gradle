@@ -11,6 +11,7 @@ buildscript {
 
     supportTest = "0.4.1"
     espressoVersion = "2.2.1"
+    jacocoVersion = "0.7.5.201505241946"
 
     supportDeps = [
         v4               : "com.android.support:support-v4:$supportLibrary",
