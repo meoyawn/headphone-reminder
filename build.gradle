@@ -7,7 +7,7 @@ buildscript {
 
     okHttpVersion = "2.5.0"
 
-    supportLibrary = "23.0.1"
+    supportLibrary = "23.1.0"
 
     supportTest = "0.4.1"
     espressoVersion = "2.2.1"
