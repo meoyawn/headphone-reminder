@@ -5,6 +5,7 @@ import android.os.StrictMode
 import com.squareup.leakcanary.LeakCanary
 import common.android.vmPolicy
 import common.thread.threadPolicy
+import domain.setIfNeeded
 import timber.log.Timber
 import kotlin.properties.Delegates
 
@@ -25,5 +26,7 @@ class App : Application() {
 
     LeakCanary.install(this)
     Timber.plant(Timber.DebugTree())
+
+    setIfNeeded(this)
   }
 }

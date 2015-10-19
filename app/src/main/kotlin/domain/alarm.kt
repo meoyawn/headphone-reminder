@@ -1,5 +1,6 @@
 package domain
 
+import adeln.boilerplate.CheckerService
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
