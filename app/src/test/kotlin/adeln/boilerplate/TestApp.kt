@@ -1,7 +1,10 @@
 package adeln.boilerplate
 
-import com.squareup.leakcanary.RefWatcher
+import android.app.Application
 
-class TestApp : App() {
-  override fun installLeakCanary(): RefWatcher? = null
+class TestApp : Application() {
+  override fun onCreate() {
+    super.onCreate()
+    App.app = this
+  }
 }

@@ -51,7 +51,7 @@ dependencies {
   compile "io.reactivex:rxjava:1.0.14"
   compile "io.reactivex:rxandroid:1.0.1"
 
-  compile "com.squareup.sqlbrite:sqlbrite:0.4.0"
+  compile "com.squareup.sqlbrite:sqlbrite:0.4.1"
   compile 'com.squareup.flow:flow:0.12'
 
   // okio stack
@@ -67,7 +67,7 @@ dependencies {
 
   testCompile "junit:junit:4.12"
   testCompile "org.robolectric:robolectric:3.0"
-  testCompile "com.squareup.assertj:assertj-android:1.1.0"
+  testCompile "com.squareup.assertj:assertj-android:1.1.1"
   testCompile "com.squareup.okhttp:mockwebserver:$okHttpVersion"
 
   androidTestCompile supportTestDependencies.rules
@@ -81,10 +81,6 @@ configurations {
 }
 
 apply plugin: 'jacoco'
-
-jacoco {
-  version jacocoVersion
-}
 
 final jacocoExcludes = [
     '**/R*.class',
