@@ -5,6 +5,7 @@ import android.os.StrictMode
 import com.squareup.leakcanary.LeakCanary
 import common.android.vmPolicy
 import common.thread.threadPolicy
+import domain.installRecorderShortcut
 import domain.setIfNeeded
 import timber.log.Timber
 import kotlin.properties.Delegates
@@ -28,5 +29,6 @@ class App : Application() {
     Timber.plant(Timber.DebugTree())
 
     setIfNeeded(this)
+    installRecorderShortcut(this)
   }
 }

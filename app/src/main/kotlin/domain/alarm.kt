@@ -8,6 +8,7 @@ import android.content.Intent
 import android.os.SystemClock
 import common.context.alarms
 import common.intent.intent
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 fun checkerService(c: Context): Intent =
@@ -15,12 +16,15 @@ fun checkerService(c: Context): Intent =
 
 fun setIfNeeded(c: Context): Unit =
     if (!alarmIsSet(c)) {
-      val fifteen = TimeUnit.MINUTES.toMillis(15)
+      val fifteen = TimeUnit.SECONDS.toMillis(5)
       c.alarms().setInexactRepeating(
           AlarmManager.ELAPSED_REALTIME,
           SystemClock.elapsedRealtime() + fifteen,
           fifteen,
           PendingIntent.getService(c, 0, checkerService(c), 0))
+      Timber.d("fresh alarm set")
+    } else {
+      Timber.d("alarm already set")
     }
 
 fun alarmIsSet(c: Context): Boolean =

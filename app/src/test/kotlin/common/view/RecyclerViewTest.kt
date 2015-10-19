@@ -12,13 +12,13 @@ import org.robolectric.RobolectricTestRunner
 class RecyclerViewTest {
   @Test fun testClicks() {
     var clicks = 0
-    val v = View(robolectric())
+    val v = View(robolectric)
     val a = RecyclerViewAdapter({ 1 },
                                 { 1 },
                                 { p, type -> v },
                                 { vh, pos -> },
                                 { clicks++ })
-    a.onCreateViewHolder(FrameLayout(robolectric()), 1)
+    a.onCreateViewHolder(FrameLayout(robolectric), 1)
     v.performClick()
     assertThat(clicks).isEqualTo(1)
     v.performClick()
@@ -30,10 +30,10 @@ class RecyclerViewTest {
     var binds = 0
     val a = RecyclerViewAdapter({ 1 },
                                 { 1 },
-                                { p, type -> View(robolectric()) },
+                                { p, type -> View(robolectric) },
                                 { vh, pos -> binds++ },
                                 { })
-    val vh = a.onCreateViewHolder(FrameLayout(robolectric()), 1)
+    val vh = a.onCreateViewHolder(FrameLayout(robolectric), 1)
     a.onBindViewHolder(vh, 1)
     assertThat(binds).isEqualTo(1)
     a.onBindViewHolder(vh, 2)
