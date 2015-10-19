@@ -10,6 +10,8 @@ import common.kotlin.notNull
 import common.view.first
 import common.view.replaceTo
 import domain.Screen
+import domain.intent.LaunchSource
+import domain.intent.mainActivityExtent
 import flow.Flow
 import flow.FlowDelegate
 import flow.History
@@ -36,9 +38,9 @@ class MainActivity : Activity() {
 
   override fun onNewIntent(intent: Intent) {
     super.onNewIntent(intent)
-    val s = when (intent.getStringExtra("from")) {
-      "record shortcut" -> Screen.Recorder
-      else -> Screen.Main
+    val s = when (mainActivityExtent(intent)) {
+      LaunchSource.DEFAULT         -> Screen.Main
+      LaunchSource.RECORD_SHORTCUT -> Screen.Recorder
     }
     Flow.get(this).replaceTo(s)
   }
