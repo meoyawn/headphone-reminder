@@ -12,7 +12,7 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class ExtentsTest {
   @Test fun testMainActivity() {
-    LaunchSource.values().forEach {
+    LaunchSource.values.forEach {
       assertThat(mainActivityExtent(mainActivityIntent(robolectric, it))).isEqualTo(it)
     }
   }

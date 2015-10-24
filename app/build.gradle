@@ -80,6 +80,7 @@ dependencies {
 
 // these are for suppressing gradle warnings
 configurations {
+  compile.exclude module: "junit"
   testCompile.exclude module: "support-annotations"
   androidTestCompile.exclude module: "support-annotations"
 }
