@@ -25,10 +25,6 @@ android {
     androidTest.java.srcDirs += 'src/androidTest/kotlin'
   }
 
-  kapt {
-    generateStubs = true
-  }
-
   dexOptions {
     preDexLibraries = !isTravis
   }

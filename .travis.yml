@@ -7,11 +7,12 @@ branches:
 
 android:
   components:
-  - build-tools-23.0.1
-  - android-23
-  - extra-android-m2repository
-  licenses:
-  - android-sdk-license-.+
+    - platform-tools
+    - build-tools-23.0.1
+    - android-23
+    - extra-android-m2repository
+    licenses:
+    - android-sdk-license-.+
 
 before_install:
   - 'export TERM=dumb'
