@@ -21,16 +21,15 @@ sealed class Screen {
   object Recorder : Screen() {
     fun setup(root: ViewGroup, detaches: PublishSubject<View>): View = run {
       val v = root.inflate(R.layout.screen_recorder)
-      val destroys = detaches.filter { it === v }
       val rv = v.byId<RecordView>(R.id.recorder)
+
+      val destroys = detaches.filter { it === v }
       audioRecord()
           .subscribeOn(Schedulers.computation())
           .unsubscribeOn(Schedulers.computation())
           .takeUntil(destroys)
           .observeOn(AndroidSchedulers.mainThread())
-          .subscribe {
-            rv.data = it
-          }
+          .subscribe { rv.data = it }
       v
     }
   }

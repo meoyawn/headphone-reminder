@@ -9,7 +9,6 @@ import domain.setIfNeeded
 import timber.log.Timber
 import kotlin.properties.Delegates
 
-// open for subclassing the test application
 class App : Application() {
   companion object {
     var app: Application by Delegates.notNull()

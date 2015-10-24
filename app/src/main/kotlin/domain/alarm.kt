@@ -11,7 +11,9 @@ import java.util.concurrent.TimeUnit
 
 
 fun setIfNeeded(c: Context): Unit =
-    if (!alarmIsSet(c)) {
+    if (alarmIsSet(c)) {
+      Timber.d("alarm already set")
+    } else {
       val fifteen = TimeUnit.SECONDS.toMillis(5)
       c.alarms().setInexactRepeating(
           AlarmManager.ELAPSED_REALTIME,
@@ -19,8 +21,6 @@ fun setIfNeeded(c: Context): Unit =
           fifteen,
           pendingCheckerService(c, 0))
       Timber.d("fresh alarm set")
-    } else {
-      Timber.d("alarm already set")
     }
 
 fun alarmIsSet(c: Context): Boolean =

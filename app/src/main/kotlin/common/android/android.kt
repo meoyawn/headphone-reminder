@@ -5,14 +5,7 @@ import android.os.StrictMode
 
 fun vmPolicy(): StrictMode.VmPolicy =
     StrictMode.VmPolicy.Builder()
-        .detectLeakedClosableObjects()
-        .apiLevel(16) {
-          detectLeakedRegistrationObjects()
-        }
-        .apiLevel(18) {
-          detectFileUriExposure()
-        }
-        .detectLeakedSqlLiteObjects()
+        .detectAll()
         .penaltyLog()
         .penaltyDeath()
         .build()
