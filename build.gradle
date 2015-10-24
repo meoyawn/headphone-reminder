@@ -1,5 +1,7 @@
 buildscript {
   ext {
+    isTravis = "true".equals(System.getenv("TRAVIS"))
+
     minSdk = 15
     targetSdk = 23
     buildTools = "23.0.1"
