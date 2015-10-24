@@ -42,6 +42,7 @@ android {
   productFlavors {
     dev {
       minSdkVersion 21
+      multiDexEnabled true
     }
     prod {}
   }
