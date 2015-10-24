@@ -8,15 +8,15 @@ import common.thread.assertWorkerThread
 import edu.emory.mathcs.jtransforms.fft.DoubleFFT_1D
 import rx.Observable
 import rx.Subscriber
-import timber.log.Timber
 
-val blockSize = 256
+private val blockSize = 256
 
-val frequency = 8000
-val channel = AudioFormat.CHANNEL_IN_MONO
-val format = AudioFormat.ENCODING_PCM_16BIT
-val bufferSize = AudioRecord.getMinBufferSize(frequency, channel, format)
-val fft by lazy {
+private val frequency = 8000
+private val channel = AudioFormat.CHANNEL_IN_MONO
+private val format = AudioFormat.ENCODING_PCM_16BIT
+private val bufferSize = AudioRecord.getMinBufferSize(frequency, channel, format)
+
+private val fft by lazy {
   assertWorkerThread()
   DoubleFFT_1D(blockSize)
 }

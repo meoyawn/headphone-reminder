@@ -8,7 +8,7 @@ import android.util.AttributeSet
 import android.view.View
 
 class RecordView : View {
-  val paint = Paint().apply {
+  private val paint = Paint().apply {
     color = Color.GREEN
     strokeWidth = 2f
   }
@@ -27,17 +27,27 @@ class RecordView : View {
 
   override fun onDraw(canvas: Canvas) {
     super.onDraw(canvas)
-    val halfHeight = height / 2f
-    val widthRatio = width.toFloat() / (data?.size ?: 1)
-
     canvas.drawColor(Color.BLACK)
 
-    // TODO make non allocating
-    data?.forEachIndexed { i, d ->
+    val ds = data
+    if (ds != null) {
+      val halfHeight = height / 2f
+      val widthRatio = width.toFloat() / ds.size
+      drawIter(ds, canvas, halfHeight, widthRatio, 0)
+    }
+  }
+
+  tailrec private fun drawIter(ds: DoubleArray,
+                               canvas: Canvas,
+                               halfHeight: Float,
+                               widthRatio: Float,
+                               i: Int) {
+    if (i < ds.size) {
       val x = i * widthRatio
-      val downY = halfHeight - d.toFloat() * 100
+      val downY = halfHeight - ds[i].toFloat() * 50
       val upY = halfHeight
       canvas.drawLine(x, downY, x, upY, paint)
+      drawIter(ds, canvas, halfHeight, widthRatio, i + 1)
     }
   }
 }
