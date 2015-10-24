@@ -3,7 +3,7 @@ buildscript {
     minSdk = 15
     targetSdk = 23
     buildTools = "23.0.1"
-    kotlinVersion = "0.14.451"
+    kotlinVersion = "1.0.0-beta-1038"
 
     okHttpVersion = "2.5.0"
 

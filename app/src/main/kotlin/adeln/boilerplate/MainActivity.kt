@@ -22,7 +22,12 @@ import timber.log.Timber
 class MainActivity : Activity() {
   companion object {
     val parceler = GsonParceler(Gson())
-    val defaultHistory = History.single(Screen.Main)
+
+    fun screen(intent: Intent): Screen =
+        when (mainActivityExtent(intent)) {
+          LaunchSource.DEFAULT         -> Screen.Main
+          LaunchSource.RECORD_SHORTCUT -> Screen.Recorder
+        }
   }
 
   val detaches = PublishSubject.create<View>()
@@ -33,16 +38,12 @@ class MainActivity : Activity() {
                             intent,
                             state,
                             parceler,
-                            defaultHistory,
+                            History.single(screen(intent)),
                             dispatcher)
 
   override fun onNewIntent(intent: Intent) {
     super.onNewIntent(intent)
-    val s = when (mainActivityExtent(intent)) {
-      LaunchSource.DEFAULT         -> Screen.Main
-      LaunchSource.RECORD_SHORTCUT -> Screen.Recorder
-    }
-    Flow.get(this).replaceTo(s)
+    Flow.get(this).replaceTo(screen(intent))
   }
 
   fun dispatch(c: Flow.TraversalCallback, t: Flow.Traversal) {
@@ -55,13 +56,13 @@ class MainActivity : Activity() {
     if (current != prev || prevView == null) {
       Timber.d("doing a traversal $prev to $current")
       val view = when (current) {
-        is Screen.Main -> current.setup(root, detaches)
+        is Screen.Main     -> current.setup(root, detaches)
         is Screen.Recorder -> current.setup(root, detaches)
       }
 
       val dir: Flow.Direction = t.direction
       when (dir) {
-        Flow.Direction.FORWARD -> {
+        Flow.Direction.FORWARD  -> {
           orig.currentViewState().save(prevView)
           replace(prevView, view)
         }
@@ -69,7 +70,7 @@ class MainActivity : Activity() {
           replace(prevView, view)
           dest.currentViewState().restore(view)
         }
-        Flow.Direction.REPLACE -> replace(prevView, view)
+        Flow.Direction.REPLACE  -> replace(prevView, view)
       }
     }
 
@@ -115,7 +116,10 @@ class MainActivity : Activity() {
       flowSupport?.onRetainNonConfigurationInstance()
 
   override fun onBackPressed(): Unit =
-      if (!(flowSupport?.onBackPressed() ?: false)) super.onBackPressed()
+      when {
+        flowSupport?.onBackPressed() ?: false -> Unit
+        else                                  -> super.onBackPressed()
+      }
 
   override fun getSystemService(name: String?): Any? =
       flowSupport?.getSystemService(name) ?: super.getSystemService(name)

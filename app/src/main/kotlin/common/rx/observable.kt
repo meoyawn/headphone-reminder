@@ -6,24 +6,30 @@ import rx.Subscriber
 import rx.subscriptions.Subscriptions
 
 fun <T> Subscriber<in T>.emit(t: T): Unit =
-    if (!isUnsubscribed) {
+    ifNotUnsubscribed {
       onNext(t)
-    }
-
-fun <T> Subscriber<in T>.error(e: Throwable): Unit =
-    if (!isUnsubscribed) {
-      onError(e)
     }
 
 fun <T> Subscriber<in T>.last(t: T): Unit =
-    if (!isUnsubscribed) {
+    ifNotUnsubscribed {
       onNext(t)
       onCompleted()
     }
 
+fun <T> Subscriber<in T>.error(e: Throwable): Unit =
+    ifNotUnsubscribed {
+      onError(e)
+    }
+
 fun <T> Subscriber<in T>.complete(): Unit =
-    if (!isUnsubscribed) {
+    ifNotUnsubscribed {
       onCompleted()
+    }
+
+inline fun <T> Subscriber<in T>.ifNotUnsubscribed(f: () -> Unit): Unit =
+    when {
+      isUnsubscribed -> Unit
+      else           -> f()
     }
 
 fun <T> Subscriber<in T>.finally(f: () -> Unit): Unit =
