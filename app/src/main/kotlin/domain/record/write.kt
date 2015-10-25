@@ -81,7 +81,7 @@ private fun writeHeader(file: File, bytesWritten: Int, channels: Short) {
 private fun shortReverseBytes(s: Short): Int =
     java.lang.Short.reverseBytes(s).toInt()
 
-private fun write(buf: RecordBuffer, sink: BufferedSink, i: Int) {
+private tailrec fun write(buf: RecordBuffer, sink: BufferedSink, i: Int) {
   if (i < buf.read) {
     val v = buf.buffer[i].toInt()
     sink.writeByte(v and 0x00FF)

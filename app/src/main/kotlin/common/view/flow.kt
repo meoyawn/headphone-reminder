@@ -10,7 +10,7 @@ fun Flow.push(t: Screen): Unit =
         .build()
         .let { setHistory(it, Flow.Direction.FORWARD) }
 
-fun History.Builder.replace(s: Screen): History.Builder =
+private fun History.Builder.replace(s: Screen): History.Builder =
     run {
       pop()
       push(s)

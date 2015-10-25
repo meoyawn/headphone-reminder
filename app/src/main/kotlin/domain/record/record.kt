@@ -9,9 +9,9 @@ import rx.Observable
 import rx.Subscriber
 import rx.schedulers.Schedulers
 
-val blockSize = 256
+val blockSize = 512
 
-val frequency = 8000
+val frequency = 16000
 private val channel = AudioFormat.CHANNEL_IN_MONO
 private val format = AudioFormat.ENCODING_PCM_16BIT
 val sampleBits = 16
