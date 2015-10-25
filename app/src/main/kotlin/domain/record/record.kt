@@ -11,9 +11,11 @@ import rx.schedulers.Schedulers
 
 val blockSize = 256
 
-private val frequency = 8000
+val frequency = 8000
 private val channel = AudioFormat.CHANNEL_IN_MONO
 private val format = AudioFormat.ENCODING_PCM_16BIT
+val sampleBits = 16
+val channels: Short = 1
 
 data class RecordBuffer(val buffer: ShortArray, var read: Int)
 

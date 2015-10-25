@@ -1,13 +1,14 @@
 package domain
 
 import adeln.boilerplate.R
+import android.os.Environment
 import android.view.View
 import android.view.ViewGroup
-import common.context.cacheDir
 import common.view.byId
 import common.view.clicks
 import common.view.inflate
 import common.view.push
+import domain.play.play
 import domain.record.audioRecord
 import domain.record.visualize
 import domain.record.writeF
@@ -15,6 +16,7 @@ import domain.view.RecordView
 import flow.Flow
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
 import timber.log.Timber
 import java.io.File
 
@@ -48,11 +50,13 @@ sealed class Screen {
             rv.data = it
           }
 
+      val file = File(Environment.getExternalStorageDirectory(), "file.pcm")
+          .apply { if (exists()) delete() }
+
       record
-          .writeF(File(root.context.cacheDir(), "file.pcm"))
-          .subscribe {
-            Timber.d("written to $it")
-          }
+          .writeF(file)
+          .flatMap { play(it).subscribeOn(Schedulers.io()) }
+          .subscribe({ Timber.d("written to $it") }, { Timber.e("", it) })
       v
     }
   }

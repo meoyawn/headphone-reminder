@@ -65,6 +65,7 @@ dependencies {
 
   // domain specific
   compile "net.sourceforge.jtransforms:jtransforms:2.4.0"
+  compile "com.squareup.okio:okio:1.6.0"
 
   testCompile "junit:junit:4.12"
   testCompile "org.robolectric:robolectric:3.0"
