@@ -3,7 +3,6 @@ package domain.record
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder.AudioSource
-import common.rx.error
 import common.rx.finally
 import common.thread.assertWorkerThread
 import edu.emory.mathcs.jtransforms.fft.DoubleFFT_1D
@@ -22,10 +21,10 @@ private val fft by lazy {
 }
 
 fun audioRecord(): Observable<DoubleArray> =
-    Observable.create<DoubleArray> { record(it) }
+    Observable.create(record())
         .retry(3)
 
-tailrec private fun fillData(i: Int,
+private tailrec fun fillData(i: Int,
                              bufferedReadResult: Int,
                              data: DoubleArray,
                              buffer: ShortArray) {
@@ -35,7 +34,7 @@ tailrec private fun fillData(i: Int,
   }
 }
 
-tailrec private fun iterate(sub: Subscriber<in DoubleArray>,
+private tailrec fun iterate(sub: Subscriber<in DoubleArray>,
                             ar: AudioRecord,
                             buffer: ShortArray,
                             data: DoubleArray) {
@@ -46,6 +45,7 @@ tailrec private fun iterate(sub: Subscriber<in DoubleArray>,
 
     fft.realForward(data)
     sub.onNext(data)
+
     iterate(sub, ar, buffer, data)
   }
 }
@@ -56,7 +56,16 @@ private fun AudioRecord.isInitialized(): Boolean =
 private fun AudioRecord.isRecording(): Boolean =
     recordingState == AudioRecord.RECORDSTATE_RECORDING
 
-private fun record(sub: Subscriber<in DoubleArray>) {
+private tailrec fun copy(ss: ShortArray, bs: ByteArray, i: Int) {
+  if (i < ss.size) {
+    val short = ss[i].toInt()
+    bs[i * 2] = (short and 0x00FF).toByte()
+    bs[i * 2 + 1] = (short shr 8).toByte()
+    copy(ss, bs, i + 1)
+  }
+}
+
+private fun record() = { sub: Subscriber<in DoubleArray> ->
   assertWorkerThread()
 
   val bufferSize = AudioRecord.getMinBufferSize(frequency, channel, format)
@@ -69,15 +78,18 @@ private fun record(sub: Subscriber<in DoubleArray>) {
   }
 
   if (ar.isInitialized()) {
-    val buffer = ShortArray(blockSize)
-    val data = DoubleArray(blockSize)
+    val audioBuffer = ShortArray(blockSize)
+    val visualData = DoubleArray(blockSize)
+
     ar.startRecording()
     if (ar.isRecording()) {
-      iterate(sub, ar, buffer, data)
+      iterate(sub, ar, audioBuffer, visualData)
     } else {
-      sub.error(IllegalStateException("could not start the record"))
+      sub.onError(IllegalStateException("could not start the record"))
     }
   } else {
-    sub.error(IllegalStateException("failed to initialize $ar"))
+    sub.onError(IllegalStateException("failed to initialize $ar"))
   }
 }
+
+//fun writeData(o:Observable<DoubleArray>)

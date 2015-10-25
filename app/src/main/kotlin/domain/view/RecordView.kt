@@ -9,8 +9,7 @@ import android.view.View
 
 class RecordView : View {
   private val paint = Paint().apply {
-    color = Color.GREEN
-    strokeWidth = 2f
+    color = Color.BLACK
   }
 
   var data: DoubleArray? = null
@@ -27,12 +26,11 @@ class RecordView : View {
 
   override fun onDraw(canvas: Canvas) {
     super.onDraw(canvas)
-    canvas.drawColor(Color.BLACK)
-
     val ds = data
     if (ds != null) {
       val halfHeight = height / 2f
       val widthRatio = width.toFloat() / ds.size
+      paint.strokeWidth = widthRatio
       drawIter(ds, canvas, halfHeight, widthRatio, 0)
     }
   }
