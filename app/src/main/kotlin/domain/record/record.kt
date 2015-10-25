@@ -4,10 +4,10 @@ import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder.AudioSource
 import common.rx.finally
-import common.thread.assertWorkerThread
 import rx.Observable
 import rx.Subscriber
 import rx.schedulers.Schedulers
+import timber.log.Timber
 
 private val channel = AudioFormat.CHANNEL_IN_MONO
 private val format = AudioFormat.ENCODING_PCM_16BIT
@@ -37,13 +37,11 @@ interface AudioRecorder {
   fun read(sa: ShortArray, offset: Int, size: Int): Int
 }
 
-fun AndroidAudioRecorder(): AndroidAudioRecorder =
-    AndroidAudioRecorder(AudioRecord(
-        AudioSource.MIC,
-        frequency,
-        channel,
-        format,
-        AudioRecord.getMinBufferSize(frequency, channel, format)))
+fun AndroidAudioRecorder(): AndroidAudioRecorder {
+  val bufferSize = AudioRecord.getMinBufferSize(frequency, channel, format)
+  Timber.d("buffer size $bufferSize")
+  return AndroidAudioRecorder(AudioRecord(AudioSource.MIC, frequency, channel, format, bufferSize))
+}
 
 class AndroidAudioRecorder(val ar: AudioRecord) : AudioRecorder {
   override fun isInitialized(): Boolean =
@@ -62,27 +60,23 @@ class AndroidAudioRecorder(val ar: AudioRecord) : AudioRecorder {
       ar.startRecording()
 }
 
+class FailedToInitializeException(msg: String) : IllegalStateException(msg)
+class FailedToStartException(msg: String) : IllegalStateException(msg)
+
 inline fun startRecording(crossinline lazy: () -> AudioRecorder) =
     { sub: Subscriber<in RecordBuffer> ->
-      assertWorkerThread()
-
       val ar = lazy()
-      sub.finally {
-        assertWorkerThread()
-        if (ar.isInitialized()) {
-          ar.release()
-        }
-      }
+      sub.finally { ar.release() }
 
       if (ar.isInitialized()) {
         ar.startRecording()
         if (ar.isRecording()) {
           readLoop(sub, RecordBuffer(ShortArray(blockSize), 0), ar)
         } else {
-          sub.onError(IllegalStateException("could not start the record"))
+          sub.onError(FailedToStartException("could not start the record"))
         }
       } else {
-        sub.onError(IllegalStateException("failed to initialize $ar"))
+        sub.onError(FailedToInitializeException("failed to initialize $ar"))
       }
     }
 
