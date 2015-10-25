@@ -47,7 +47,7 @@ private fun writeSub(file: File, sub: Subscriber<in File>): Subscriber<RecordBuf
           sub.onError(e)
 
       override fun onNext(buf: RecordBuffer) {
-        write(buf, sink, 0)
+        writeLoop(buf, sink, 0)
         bytesWritten += buf.read * 2
       }
     }
@@ -81,11 +81,11 @@ private fun writeHeader(file: File, bytesWritten: Int, channels: Short) {
 private fun shortReverseBytes(s: Short): Int =
     java.lang.Short.reverseBytes(s).toInt()
 
-private tailrec fun write(buf: RecordBuffer, sink: BufferedSink, i: Int) {
+private tailrec fun writeLoop(buf: RecordBuffer, sink: BufferedSink, i: Int) {
   if (i < buf.read) {
     val v = buf.buffer[i].toInt()
     sink.writeByte(v and 0x00FF)
     sink.writeByte(v shr 8)
-    write(buf, sink, i + 1)
+    writeLoop(buf, sink, i + 1)
   }
 }
