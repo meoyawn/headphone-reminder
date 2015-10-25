@@ -2,8 +2,16 @@ package adeln.boilerplate
 
 import android.app.Activity
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
+import android.support.v7.app.ActionBar
+import android.support.v7.app.AppCompatCallback
+import android.support.v7.app.AppCompatDelegate
+import android.support.v7.view.ActionMode
+import android.support.v7.widget.Toolbar
+import android.view.MenuInflater
 import android.view.View
+import android.view.ViewGroup
 import com.google.gson.Gson
 import common.activity.root
 import common.kotlin.notNull
@@ -19,7 +27,7 @@ import rx.subjects.PublishSubject
 import thirdparty.GsonParceler
 import timber.log.Timber
 
-class MainActivity : Activity() {
+class MainActivity : Activity(), AppCompatCallback {
   companion object {
     val parceler = GsonParceler(Gson())
 
@@ -29,6 +37,8 @@ class MainActivity : Activity() {
           LaunchSource.RECORD_SHORTCUT -> Screen.Recorder
         }
   }
+
+  val delegate by lazy { AppCompatDelegate.create(this, this) }
 
   val detaches = PublishSubject.create<View>()
   var flowSupport: FlowDelegate? = null
@@ -87,8 +97,41 @@ class MainActivity : Activity() {
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
+    delegate.installViewFactory()
+    delegate.onCreate(savedInstanceState)
     super.onCreate(savedInstanceState)
     flowSupport = flowOnCreate(savedInstanceState) { t, c -> dispatch(c, t) }
+  }
+
+  fun getSupportActionBar(): ActionBar? = delegate.supportActionBar
+  fun setSupportActionBar(tb: Toolbar?) = delegate.setSupportActionBar(tb)
+
+  override fun onPostCreate(savedInstanceState: Bundle?) {
+    super.onPostCreate(savedInstanceState)
+    delegate.onPostCreate(savedInstanceState)
+  }
+
+  override fun getMenuInflater(): MenuInflater? = delegate.menuInflater
+
+  override fun setContentView(layoutResID: Int) {
+    delegate.setContentView(layoutResID)
+  }
+
+  override fun setContentView(view: View?) {
+    delegate.setContentView(view)
+  }
+
+  override fun setContentView(view: View?, params: ViewGroup.LayoutParams?) {
+    delegate.setContentView(view, params)
+  }
+
+  override fun addContentView(view: View?, params: ViewGroup.LayoutParams?) {
+    delegate.addContentView(view, params)
+  }
+
+  override fun onConfigurationChanged(newConfig: Configuration?) {
+    super.onConfigurationChanged(newConfig)
+    delegate.onConfigurationChanged(newConfig)
   }
 
   override fun onResume() {
@@ -96,9 +139,19 @@ class MainActivity : Activity() {
     flowSupport?.onResume()
   }
 
+  override fun onPostResume() {
+    super.onPostResume()
+    delegate.onPostResume()
+  }
+
   override fun onPause() {
     flowSupport?.onPause()
     super.onPause()
+  }
+
+  override fun onStop() {
+    super.onStop()
+    delegate.onStop()
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
@@ -110,6 +163,16 @@ class MainActivity : Activity() {
     root().first().notNull { detaches.onNext(it) }
     detaches.onCompleted()
     super.onDestroy()
+    delegate.onDestroy()
+  }
+
+  override fun onTitleChanged(title: CharSequence?, color: Int) {
+    super.onTitleChanged(title, color)
+    delegate.setTitle(title)
+  }
+
+  override fun invalidateOptionsMenu() {
+    delegate.invalidateOptionsMenu()
   }
 
   override fun onRetainNonConfigurationInstance(): Any? =
@@ -123,4 +186,8 @@ class MainActivity : Activity() {
 
   override fun getSystemService(name: String?): Any? =
       flowSupport?.getSystemService(name) ?: super.getSystemService(name)
+
+  override fun onSupportActionModeFinished(mode: ActionMode?) = Unit
+  override fun onSupportActionModeStarted(mode: ActionMode?) = Unit
+  override fun onWindowStartingSupportActionMode(callback: ActionMode.Callback?): ActionMode? = null
 }

@@ -3,6 +3,8 @@ package common.view
 import android.support.annotation.IdRes
 import android.view.View
 import android.view.ViewGroup
+import com.jakewharton.rxbinding.view.RxView
+import rx.Observable
 
 inline fun <reified T : View> View.maybe(@IdRes i: Int): T? =
     findViewById(i).let {
@@ -26,3 +28,6 @@ fun <T : View> T.matchParent() =
       layoutParams = ViewGroup.LayoutParams(
           ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
     }
+
+fun View.clicks(): Observable<Void> =
+    RxView.clicks(this)

@@ -5,48 +5,32 @@ import android.media.AudioRecord
 import android.media.MediaRecorder.AudioSource
 import common.rx.finally
 import common.thread.assertWorkerThread
-import edu.emory.mathcs.jtransforms.fft.DoubleFFT_1D
 import rx.Observable
 import rx.Subscriber
+import rx.schedulers.Schedulers
 
-private val blockSize = 256
+val blockSize = 256
 
 private val frequency = 8000
 private val channel = AudioFormat.CHANNEL_IN_MONO
 private val format = AudioFormat.ENCODING_PCM_16BIT
 
-private val fft by lazy {
-  assertWorkerThread()
-  DoubleFFT_1D(blockSize)
-}
+data class RecordBuffer(val buffer: ShortArray, var read: Int)
 
-fun audioRecord(): Observable<DoubleArray> =
-    Observable.create(record())
+private fun RecordBuffer.read(ar: AudioRecord): RecordBuffer =
+    apply { read = ar.read(buffer, 0, blockSize) }
+
+fun audioRecord(): Observable<RecordBuffer> =
+    Observable.create(startRecording())
         .retry(3)
+        .subscribeOn(Schedulers.io())
+        .unsubscribeOn(Schedulers.io())
 
-private tailrec fun fillData(i: Int,
-                             bufferedReadResult: Int,
-                             data: DoubleArray,
-                             buffer: ShortArray) {
-  if (i < blockSize && i < bufferedReadResult) {
-    data[i] = buffer[i].toDouble() / 32768.0
-    fillData(i + 1, bufferedReadResult, data, buffer)
-  }
-}
-
-private tailrec fun iterate(sub: Subscriber<in DoubleArray>,
-                            ar: AudioRecord,
-                            buffer: ShortArray,
-                            data: DoubleArray) {
+private tailrec fun read(sub: Subscriber<in RecordBuffer>, buf: RecordBuffer, ar: AudioRecord) {
   if (!sub.isUnsubscribed) {
-    val bufferedReadResult = ar.read(buffer, 0, blockSize)
-
-    fillData(0, bufferedReadResult, data, buffer)
-
-    fft.realForward(data)
-    sub.onNext(data)
-
-    iterate(sub, ar, buffer, data)
+    val read = buf.read(ar)
+    sub.onNext(read)
+    read(sub, buf, ar)
   }
 }
 
@@ -56,34 +40,22 @@ private fun AudioRecord.isInitialized(): Boolean =
 private fun AudioRecord.isRecording(): Boolean =
     recordingState == AudioRecord.RECORDSTATE_RECORDING
 
-private tailrec fun copy(ss: ShortArray, bs: ByteArray, i: Int) {
-  if (i < ss.size) {
-    val short = ss[i].toInt()
-    bs[i * 2] = (short and 0x00FF).toByte()
-    bs[i * 2 + 1] = (short shr 8).toByte()
-    copy(ss, bs, i + 1)
-  }
-}
-
-private fun record() = { sub: Subscriber<in DoubleArray> ->
+private fun startRecording() = { sub: Subscriber<in RecordBuffer> ->
   assertWorkerThread()
 
   val bufferSize = AudioRecord.getMinBufferSize(frequency, channel, format)
   val ar = AudioRecord(AudioSource.MIC, frequency, channel, format, bufferSize)
   sub.finally {
+    assertWorkerThread()
     if (ar.isInitialized()) {
-      assertWorkerThread()
       ar.release()
     }
   }
 
   if (ar.isInitialized()) {
-    val audioBuffer = ShortArray(blockSize)
-    val visualData = DoubleArray(blockSize)
-
     ar.startRecording()
     if (ar.isRecording()) {
-      iterate(sub, ar, audioBuffer, visualData)
+      read(sub, RecordBuffer(ShortArray(blockSize), 0), ar)
     } else {
       sub.onError(IllegalStateException("could not start the record"))
     }
@@ -91,5 +63,3 @@ private fun record() = { sub: Subscriber<in DoubleArray> ->
     sub.onError(IllegalStateException("failed to initialize $ar"))
   }
 }
-
-//fun writeData(o:Observable<DoubleArray>)
