@@ -60,8 +60,8 @@ class AndroidAudioRecorder(val ar: AudioRecord) : AudioRecorder {
       ar.startRecording()
 }
 
-class FailedToInitializeException(msg: String) : IllegalStateException(msg)
-class FailedToStartException(msg: String) : IllegalStateException(msg)
+class FailedToInitialize(msg: String) : IllegalStateException(msg)
+class FailedToStart(msg: String) : IllegalStateException(msg)
 
 inline fun startRecording(crossinline lazy: () -> AudioRecorder) =
     { sub: Subscriber<in RecordBuffer> ->
@@ -73,10 +73,10 @@ inline fun startRecording(crossinline lazy: () -> AudioRecorder) =
         if (ar.isRecording()) {
           readLoop(sub, RecordBuffer(ShortArray(blockSize), 0), ar)
         } else {
-          sub.onError(FailedToStartException("could not start the record"))
+          sub.onError(FailedToStart("could not start the record"))
         }
       } else {
-        sub.onError(FailedToInitializeException("failed to initialize $ar"))
+        sub.onError(FailedToInitialize("failed to initialize $ar"))
       }
     }
 

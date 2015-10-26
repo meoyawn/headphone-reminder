@@ -5,24 +5,22 @@ import okio.BufferedSource
 import okio.Okio
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 import rx.Observable
 import rx.observers.TestSubscriber
 import java.io.InputStream
 
-@RunWith(RobolectricTestRunner::class)
 class RecordTest {
   @Test fun testRecording() {
     val ts = TestSubscriber<RecordBuffer>()
-    val tar = TestAudioRecorder(stream("robolectric.properties"), true, true)
-    val cnt = 100
+    val tar = TestAudioRecorder(stream("mgs5.m4a"), true, true)
+    val cnt = 300
     Observable.create(startRecording { tar })
         .take(cnt)
         .subscribe(ts)
 
     ts.assertCompleted()
     ts.assertValueCount(cnt)
+    assertThat(tar.triedToStart).isTrue()
     assertThat(tar.released).isTrue()
   }
 
@@ -31,7 +29,7 @@ class RecordTest {
     val tar = TestAudioRecorder(stream("robolectric.properties"), false, true)
     Observable.create(startRecording { tar }).subscribe(ts)
 
-    ts.assertError(FailedToInitializeException::class.java)
+    ts.assertError(FailedToInitialize::class.java)
     assertThat(tar.triedToStart).isFalse()
     assertThat(tar.released).isTrue()
   }
@@ -41,16 +39,19 @@ class RecordTest {
     val tar = TestAudioRecorder(stream("robolectric.properties"), true, false)
     Observable.create(startRecording { tar }).subscribe(ts)
 
-    ts.assertError(FailedToStartException::class.java)
     assertThat(tar.triedToStart).isTrue()
+    ts.assertError(FailedToStart::class.java)
     assertThat(tar.released).isTrue()
   }
 }
 
+fun bufferedSource(stream: InputStream): BufferedSource =
+    Okio.buffer(Okio.source(stream))
+
 fun TestAudioRecorder(stream: InputStream,
                       initialized: Boolean,
                       recording: Boolean): TestAudioRecorder =
-    TestAudioRecorder(Okio.buffer(Okio.source(stream)), initialized, recording)
+    TestAudioRecorder(bufferedSource(stream), initialized, recording)
 
 class TestAudioRecorder(val bs: BufferedSource, val initialized: Boolean, val recording: Boolean) : AudioRecorder {
   var triedToStart = false

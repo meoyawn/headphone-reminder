@@ -90,22 +90,19 @@ final jacocoExcludes = [
     "**/*Package.class"
 ]
 
-final unitTestTask = "testDebugUnitTest"
+final unitTestTask = "testDevDebugUnitTest"
 task jacocoReport(type: JacocoReport, dependsOn: unitTestTask) {
-  group = 'Reporting'
-  description = 'Generate Jacoco coverage reports after running tests.'
-
   reports {
     xml.enabled = true
     html.enabled = true
   }
 
-  classDirectories = fileTree(dir: 'build/intermediates/classes/debug', excludes: jacocoExcludes)
+  classDirectories = fileTree(dir: 'build/intermediates/classes/dev/debug', excludes: jacocoExcludes)
   sourceDirectories = files("src/main/kotlin")
   executionData = files("build/jacoco/${unitTestTask}.exec")
 
   doFirst {
-    file('build/intermediates/classes/debug').eachFileRecurse { file ->
+    file('build/intermediates/classes/dev/debug').eachFileRecurse { file ->
       if (file.name.contains('$$')) {
         file.renameTo(file.path.replace('$$', '$'))
       }
