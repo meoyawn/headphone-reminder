@@ -12,10 +12,10 @@ import timber.log.Timber
 private val channel = AudioFormat.CHANNEL_IN_MONO
 private val format = AudioFormat.ENCODING_PCM_16BIT
 
-val blockSize = 512
-val frequency = 16384
+const val frequency = 44100
+const val blockSize = frequency / 60
 
-val sampleBits = 16
+val bitDepth = 16
 val channels: Short = 1
 
 data class RecordBuffer(val buffer: ShortArray, var read: Int)

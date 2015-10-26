@@ -65,12 +65,12 @@ private fun writeHeader(file: File, bytesWritten: Int, channels: Short) {
   raf.writeShort(shortReverseBytes(1))
   raf.writeShort(shortReverseBytes(channels))
 
-  val bytesPerSec = (sampleBits + 7 ) / 8
+  val bytesPerSec = (bitDepth + 7 ) / 8
   raf.writeInt(Integer.reverseBytes(frequency))
   raf.writeInt(Integer.reverseBytes(frequency * channels * bytesPerSec)); // byte rate
 
   raf.writeShort(shortReverseBytes((channels * bytesPerSec).toShort()))
-  raf.writeShort(shortReverseBytes(sampleBits.toShort()))
+  raf.writeShort(shortReverseBytes(bitDepth.toShort()))
 
   raf.writeBytes("data")
   raf.writeInt(Integer.reverseBytes(bytesWritten)); // data subchunk size
