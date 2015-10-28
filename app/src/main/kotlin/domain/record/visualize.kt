@@ -1,7 +1,6 @@
 package domain.record
 
 import edu.emory.mathcs.jtransforms.fft.DoubleFFT_1D
-import rx.Observable
 
 private tailrec fun copyLoop(rec: RecordBuffer, data: DoubleArray, i: Int) {
   val buffer = rec.buffer
@@ -11,14 +10,12 @@ private tailrec fun copyLoop(rec: RecordBuffer, data: DoubleArray, i: Int) {
   }
 }
 
-fun Observable<RecordBuffer>.visualize(): Observable<DoubleArray> =
-    run {
-      val fft = lazy { DoubleFFT_1D(blockSize) }
-      val buffer = DoubleArray(blockSize)
-      this
-          .map {
-            copyLoop(it, buffer, 0)
-            fft.value.realForward(buffer)
-            buffer
-          }
-    }
+private fun fft(buffer: DoubleArray, fft: Lazy<DoubleFFT_1D>): (RecordBuffer) -> DoubleArray = {
+  copyLoop(it, buffer, 0)
+  fft.value.realForward(buffer)
+  buffer
+}
+
+fun visualize(): (RecordBuffer) -> DoubleArray =
+    fft(DoubleArray(blockSize), lazy { DoubleFFT_1D(blockSize) })
+

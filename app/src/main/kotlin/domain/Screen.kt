@@ -44,7 +44,7 @@ sealed class Screen {
           .share()
 
       record
-          .visualize()
+          .map(visualize())
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe {
             rv.data = it
