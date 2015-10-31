@@ -1,5 +1,6 @@
 package common.either
 
+import timber.log.Timber
 import java.io.IOException
 
 inline fun <reified E : Exception, R> tryCatch(f: () -> R, err: (E) -> R): R =
@@ -12,6 +13,9 @@ inline fun <reified E : Exception, R> tryCatch(f: () -> R, err: (E) -> R): R =
         throw e
       }
     }
+
+inline fun <reified E : Exception> tryCatchUnit(f: () -> Unit): Unit =
+    tryCatch<E, Unit>(f, { Timber.e("caught", it) })
 
 inline fun <reified E : Exception, R> tryEither(f: () -> R): Either<E, R> =
     tryCatch({ Right(f()) }, { e: E -> Left(e) })

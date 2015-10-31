@@ -3,7 +3,7 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent">
 
-    <domain.view.RecordView
+    <domain.view.DrawingView
         android:id="@+id/recorder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

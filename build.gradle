@@ -5,7 +5,7 @@ buildscript {
     minSdk = 15
     targetSdk = 23
     buildTools = "23.0.1"
-    kotlinVersion = "1.0.0-beta-1038"
+    kotlinVersion = "1.0.0-beta-1103"
 
     okHttpVersion = "2.5.0"
     leakCanaryVersion = "1.3.1"
